@@ -58,15 +58,7 @@ An advanced, AI-powered personal finance dashboard that provides deep insights i
 
     The frontend will be running at `http://localhost:5173`.
 
-## 🚀 Deployment (Vercel)
 
-This project is configured for deployment on [Vercel](https://vercel.com).
-
-1.  Push the repository to GitHub.
-2.  Import the project in Vercel.
-3.  Vercel will automatically detect the configuration.
-
-> **⚠️ IMPORTANT**: Vercel serverless functions are ephemeral. The local SQLite database (`finance_ai.db`) **will reset** on every deployment. For a production deployment, you **must connect a cloud database** (e.g., Vercel Postgres, Neon, or Supabase) by setting the `DATABASE_URL` environment variable.
 
 ## 📸 Screenshots
 
