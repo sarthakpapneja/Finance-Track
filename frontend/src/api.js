@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8000';
+const API_URL = import.meta.env.PROD ? '/api' : 'http://localhost:8000';
 
 // Add auth token to all requests
 axios.interceptors.request.use((config) => {
