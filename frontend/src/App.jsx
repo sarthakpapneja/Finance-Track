@@ -37,6 +37,20 @@ function App() {
     JPY: { symbol: '¥', locale: 'ja-JP', name: 'Japanese Yen' }
   };
 
+
+
+  // Financial Tips Data
+  const FINANCIAL_TIPS = [
+    { title: "The 50/30/20 Rule", text: "Allocate 50% of income to needs, 30% to wants, and 20% to savings/debt repayment.", icon: "PieChart" },
+    { title: "Emergency Fund", text: "Aim to save 3-6 months of living expenses in a liquid account for unexpected events.", icon: "Shield" },
+    { title: "Pay Yourself First", text: "Automate savings transfers on payday before you start spending.", icon: "Target" },
+    { title: "High-Interest Debt", text: "Prioritize paying off debts with interest rates above 7% (e.g., credit cards) first.", icon: "TrendingDown" },
+    { title: "Compound Interest", text: "Starting early matters more than starting big. Let time multiply your wealth.", icon: "Clock" },
+    { title: "Review Subscriptions", text: "Audit your recurring charges monthly. Cancel unused services to free up cash flow.", icon: "Search" },
+    { title: "The 24-Hour Rule", text: "Wait 24 hours before making any non-essential purchase over $50 to curb impulse buying.", icon: "Clock" }
+  ];
+  const [currentTipIndex, setCurrentTipIndex] = useState(Math.floor(Math.random() * FINANCIAL_TIPS.length));
+
   useEffect(() => {
     localStorage.setItem('finance_ai_currency', currency);
   }, [currency]);
@@ -1135,6 +1149,43 @@ function App() {
                         </div>
                       )}
 
+
+
+                      {/* Financial Wisdom Widget */}
+                      <div className="bg-gradient-to-br from-indigo-50 to-blue-50 p-6 rounded-[2rem] border border-indigo-100 shadow-sm animate-in relative group overflow-hidden">
+                        <div className="absolute top-0 right-0 w-24 h-24 bg-blue-500/10 rounded-full -mr-8 -mt-8 blur-xl"></div>
+
+                        <div className="flex items-center justify-between mb-4 relative z-10">
+                          <div className="flex items-center gap-2 text-indigo-700">
+                            <Lightbulb className="w-5 h-5" />
+                            <h4 className="font-bold text-sm uppercase tracking-tighter">Financial Wisdom</h4>
+                          </div>
+                          <button
+                            onClick={() => setCurrentTipIndex((prev) => (prev + 1) % FINANCIAL_TIPS.length)}
+                            className="p-1.5 bg-white/60 hover:bg-white text-indigo-400 hover:text-indigo-600 rounded-lg transition-all"
+                            title="Next Tip"
+                          >
+                            <RefreshCw size={14} />
+                          </button>
+                        </div>
+
+                        <div className="bg-white/60 p-4 rounded-2xl relative z-10 backdrop-blur-sm">
+                          <h5 className="font-black text-indigo-900 mb-1">{FINANCIAL_TIPS[currentTipIndex].title}</h5>
+                          <p className="text-indigo-700/80 text-xs leading-relaxed font-medium">
+                            "{FINANCIAL_TIPS[currentTipIndex].text}"
+                          </p>
+                        </div>
+
+                        <div className="flex justify-center gap-1.5 mt-4">
+                          {FINANCIAL_TIPS.map((_, idx) => (
+                            <div
+                              key={idx}
+                              className={`h-1 rounded-full transition-all duration-300 ${idx === currentTipIndex ? 'w-4 bg-indigo-400' : 'w-1 bg-indigo-200'}`}
+                            ></div>
+                          ))}
+                        </div>
+                      </div>
+
                       {/* Goals Widget */}
                       <div className="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm animate-in flex flex-col h-full">
                         <div className="flex items-center justify-between mb-6">
@@ -1534,7 +1585,7 @@ function App() {
                 </div>
               </div>
               <div className="border-t border-slate-800 mt-20 pt-10 flex flex-col md:flex-row justify-between items-center gap-6">
-                <p className="text-slate-500 text-sm font-bold">&copy; 2024 Finance Intelligence AI. All systems operational.</p>
+                <p className="text-slate-500 text-sm font-bold">&copy; 2026 Finance Intelligence AI. All systems operational. Made by Sarthak Papneja.</p>
                 <div className="flex gap-8 text-slate-500 text-xs font-black uppercase tracking-widest">
                   <span className="hover:text-white cursor-pointer">Security</span>
                   <span className="hover:text-white cursor-pointer">Privacy</span>
@@ -1543,6 +1594,7 @@ function App() {
               </div>
             </div>
           </footer>
+
 
           {/* Manual Transaction Modal */}
           {showManualForm && (

@@ -30,6 +30,7 @@ By leveraging machine learning models for **anomaly detection**, **spending fore
 - **Spending Personality**: Analyzes your habits to categorize you (e.g., "The Saver", "The Impulse Buyer").
 - **Currency Selection**: Support for **USD ($), INR (₹), EUR (€), GBP (£), and JPY (¥)** with automatic formatting.
 - **Runway Analysis**: Calculates exactly how long your money will last, with intelligent handling for net negative positions (Debt/Overdue).
+- **Financial Wisdom**: Rotating financial tips and actionable advice (e.g., "50/30/20 Rule", "Emergency Fund") displayed directly on the dashboard.
 
 ### 📊 Interactive Dashboard
 - **Real-time Visualization**: Dynamic charts for income vs. expenses, category breakdowns, and net worth.
