@@ -27,6 +27,25 @@ function App() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedTransactions, setSelectedTransactions] = useState(new Set());
 
+  // Currency State
+  const [currency, setCurrency] = useState(localStorage.getItem('finance_ai_currency') || 'USD');
+  const CURRENCY_CONFIG = {
+    USD: { symbol: '$', locale: 'en-US', name: 'US Dollar' },
+    INR: { symbol: '₹', locale: 'en-IN', name: 'Indian Rupee' },
+    EUR: { symbol: '€', locale: 'de-DE', name: 'Euro' },
+    GBP: { symbol: '£', locale: 'en-GB', name: 'British Pound' },
+    JPY: { symbol: '¥', locale: 'ja-JP', name: 'Japanese Yen' }
+  };
+
+  useEffect(() => {
+    localStorage.setItem('finance_ai_currency', currency);
+  }, [currency]);
+
+  const formatMoney = (amount) => {
+    const config = CURRENCY_CONFIG[currency] || CURRENCY_CONFIG.USD;
+    return `${config.symbol}${Number(amount).toLocaleString(config.locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  };
+
   // Advanced Analytics State
   const [analyticsSummary, setAnalyticsSummary] = useState(null);
   const [subscriptions, setSubscriptions] = useState([]);
@@ -592,8 +611,17 @@ function App() {
                   </button>
                 </nav>
 
-                {/* User Menu */}
+                {/* User Menu & Currency Selector */}
                 <div className="flex items-center gap-3">
+                  <select
+                    value={currency}
+                    onChange={(e) => setCurrency(e.target.value)}
+                    className="bg-slate-100 text-slate-700 text-xs font-bold py-2 px-3 rounded-xl border-none focus:ring-2 focus:ring-blue-500 outline-none cursor-pointer hover:bg-slate-200 transition-colors"
+                  >
+                    {Object.keys(CURRENCY_CONFIG).map(code => (
+                      <option key={code} value={code}>{code}</option>
+                    ))}
+                  </select>
                   {currentUser && (
                     <span className="text-xs font-bold text-slate-500 hidden sm:block">
                       Hi, <span className="text-slate-900">{currentUser.full_name || currentUser.username}</span>
@@ -655,9 +683,9 @@ function App() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4">Financial Amount ($)</label>
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4">Financial Amount ({CURRENCY_CONFIG[currency]?.symbol || '$'})</label>
                       <div className="relative">
-                        <span className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400 font-bold">$</span>
+                        <span className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400 font-bold">{CURRENCY_CONFIG[currency]?.symbol || '$'}</span>
                         <input
                           type="number"
                           step="0.01"
@@ -826,7 +854,7 @@ function App() {
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-slate-500 text-[10px] font-bold uppercase tracking-widest mb-1">Total Income</p>
-                        <p className="text-2xl font-black text-slate-900">${totalIncome.toLocaleString('en-US', { minimumFractionDigits: 2 })}</p>
+                        <p className="text-2xl font-black text-slate-900">{formatMoney(totalIncome)}</p>
                       </div>
                       <div className="p-3 bg-emerald-50 rounded-xl text-emerald-600">
                         <ArrowUpRight className="w-6 h-6" />
@@ -838,7 +866,7 @@ function App() {
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-slate-500 text-[10px] font-bold uppercase tracking-widest mb-1">Total Expenses</p>
-                        <p className="text-2xl font-black text-slate-900">${totalExpenses.toLocaleString('en-US', { minimumFractionDigits: 2 })}</p>
+                        <p className="text-2xl font-black text-slate-900">{formatMoney(totalExpenses)}</p>
                       </div>
                       <div className="p-3 bg-rose-50 rounded-xl text-rose-600">
                         <ArrowDownRight className="w-6 h-6" />
@@ -850,7 +878,7 @@ function App() {
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest mb-1">Net Balance</p>
-                        <p className="text-2xl font-black text-white">${netBalance.toLocaleString('en-US', { minimumFractionDigits: 2 })}</p>
+                        <p className="text-2xl font-black text-white">{formatMoney(netBalance)}</p>
                       </div>
                       <div className="p-3 bg-blue-500/20 rounded-xl text-blue-400">
                         <Wallet className="w-6 h-6" />
@@ -864,7 +892,7 @@ function App() {
                         <div className="flex items-center justify-between">
                           <div>
                             <p className="text-slate-500 text-[10px] font-bold uppercase tracking-widest mb-1">Burn Rate</p>
-                            <p className="text-xl font-black text-slate-900">${analyticsSummary.burn_rate_daily?.toFixed(2)}<span className="text-xs text-slate-400 font-medium ml-1">/ day</span></p>
+                            <p className="text-xl font-black text-slate-900">{formatMoney(analyticsSummary.burn_rate_daily)}<span className="text-xs text-slate-400 font-medium ml-1">/ day</span></p>
                           </div>
                           <div className="p-3 bg-orange-50 rounded-xl text-orange-600">
                             <Zap className="w-5 h-5" />
@@ -877,7 +905,9 @@ function App() {
                           <div>
                             <p className="text-slate-500 text-[10px] font-bold uppercase tracking-widest mb-1">Runway</p>
                             <p className={`text-xl font-black ${analyticsSummary.days_until_broke >= 30 ? 'text-emerald-600' : 'text-rose-600'}`}>
-                              {analyticsSummary.days_until_broke !== null ? `${analyticsSummary.days_until_broke} Days` : '∞'}
+                              {analyticsSummary.days_until_broke !== null
+                                ? `${analyticsSummary.days_until_broke} Days`
+                                : (analyticsSummary.burn_rate_daily === 0 ? '∞ (Safe)' : 'Overdue')}
                             </p>
                           </div>
                           <div className="p-3 bg-purple-50 rounded-xl text-purple-600">
@@ -1008,7 +1038,7 @@ function App() {
                         <div className="bg-indigo-800/50 p-4 rounded-xl border border-indigo-700/50 hover:bg-indigo-800 transition-colors">
                           <p className="text-indigo-300 text-[10px] font-bold uppercase tracking-widest mb-1">Biggest Txn</p>
                           <p className="text-xl font-black text-white">
-                            ${Math.max(...transactions.map(t => Math.abs(t.amount)), 0).toFixed(0)}
+                            {formatMoney(Math.max(...transactions.map(t => Math.abs(t.amount)), 0))}
                           </p>
                           <p className="text-xs text-indigo-300 font-medium mt-1">One-time Expense</p>
                         </div>
@@ -1016,7 +1046,7 @@ function App() {
                         <div className="bg-indigo-800/50 p-4 rounded-xl border border-indigo-700/50 hover:bg-indigo-800 transition-colors">
                           <p className="text-indigo-300 text-[10px] font-bold uppercase tracking-widest mb-1">Avg Transaction</p>
                           <p className="text-xl font-black text-white">
-                            ${(transactions.reduce((sum, t) => sum + Math.abs(t.amount), 0) / (transactions.length || 1)).toFixed(0)}
+                            {formatMoney(transactions.reduce((sum, t) => sum + Math.abs(t.amount), 0) / (transactions.length || 1))}
                           </p>
                           <p className="text-xs text-indigo-300 font-medium mt-1">Typical Spend</p>
                         </div>
@@ -1279,7 +1309,7 @@ function App() {
                                 ) : (
                                   <ArrowUpRight className="w-3 h-3 mr-1" />
                                 )}
-                                ${Math.abs(t.amount).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                                {formatMoney(Math.abs(t.amount))}
                               </div>
                             </td>
                             <td className="px-6 py-6">
@@ -1369,7 +1399,7 @@ function App() {
                       <div className="flex-1 w-full space-y-2">
                         <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4">Monthly Allocation ($)</label>
                         <div className="relative">
-                          <span className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 font-bold">$</span>
+                          <span className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 font-bold">{CURRENCY_CONFIG[currency]?.symbol || '$'}</span>
                           <input
                             type="number"
                             value={newBudget.amount}
@@ -1409,7 +1439,7 @@ function App() {
                         <div className="flex justify-between items-start mb-4">
                           <div>
                             <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">{budget.category}</h4>
-                            <p className="text-lg font-black text-slate-900">${budget.amount.toLocaleString('en-US', { minimumFractionDigits: 2 })}</p>
+                            <p className="text-lg font-black text-slate-900">{formatMoney(budget.amount)}</p>
                           </div>
                           <span className={`px-2 py-1 text-[10px] font-bold uppercase rounded-lg border ${isOverBudget ? 'bg-rose-50 text-rose-600 border-rose-100' : 'bg-emerald-50 text-emerald-600 border-emerald-100'}`}>
                             {isOverBudget ? 'Limit Exceeded' : 'Safe'}
@@ -1418,7 +1448,7 @@ function App() {
 
                         <div className="mb-4 space-y-2">
                           <div className="flex justify-between text-[10px] font-bold">
-                            <span className="text-slate-400">${spent.toLocaleString()} / ${budget.amount.toLocaleString()}</span>
+                            <span className="text-slate-400">{formatMoney(spent)} / {formatMoney(budget.amount)}</span>
                             <span className={isOverBudget ? 'text-rose-600' : 'text-slate-900'}>{percentage.toFixed(0)}%</span>
                           </div>
                           <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
@@ -1559,7 +1589,7 @@ function App() {
                     <div className="space-y-2">
                       <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4">Amount</label>
                       <div className="relative">
-                        <span className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400 font-bold font-lg">$</span>
+                        <span className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400 font-bold font-lg">{CURRENCY_CONFIG[currency]?.symbol || '$'}</span>
                         <input
                           type="number"
                           step="0.01"

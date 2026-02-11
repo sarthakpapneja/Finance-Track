@@ -28,6 +28,8 @@ By leveraging machine learning models for **anomaly detection**, **spending fore
 - **Anomaly Detection**: Automatically flags unusual transactions and potential fraud.
 - **Financial Health Score**: A dynamic 0-100 score that rates your financial stability in real-time.
 - **Spending Personality**: Analyzes your habits to categorize you (e.g., "The Saver", "The Impulse Buyer").
+- **Currency Selection**: Support for **USD ($), INR (₹), EUR (€), GBP (£), and JPY (¥)** with automatic formatting.
+- **Runway Analysis**: Calculates exactly how long your money will last, with intelligent handling for net negative positions (Debt/Overdue).
 
 ### 📊 Interactive Dashboard
 - **Real-time Visualization**: Dynamic charts for income vs. expenses, category breakdowns, and net worth.
@@ -113,7 +115,8 @@ Finance-Track/
 - [ ] **Mobile App**: React Native version for iOS/Android.
 - [ ] **Bank Sync**: Integration with Plaid for automatic transaction fetching.
 - [ ] **Investment Tracking**: Real-time stock and crypto portfolio monitoring.
-- [ ] **Multi-Currency Support**: Automatic conversion for international transactions.
+- [ ] **Investment Tracking**: Real-time stock and crypto portfolio monitoring.
+- [x] **Multi-Currency Support**: Automatic formatting for international transactions.
 
 ## 🤝 Contributing
 

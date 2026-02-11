@@ -8,6 +8,13 @@ import os
 from . import models, schemas, database, parsers
 from .ml import ml_service
 from . import auth as auth_module
+import logging
+
+# Setup logging
+logging.basicConfig(level=logging.WARNING)
+logger = logging.getLogger(__name__)
+
+# Trigger reload for DB reset
 
 app = FastAPI(title="Finance Intelligence AI")
 
@@ -119,6 +126,9 @@ async def upload_statement(
         db.commit()
             
         return {"transactions_count": len(saved_txns), "statement_id": statement.id, "filename": file.filename}
+    except Exception as e:
+        logger.error(f"Error processing upload: {str(e)}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"Error processing file: {str(e)}")
     finally:
         if os.path.exists(temp_file):
             os.remove(temp_file)
